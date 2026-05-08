@@ -13,6 +13,7 @@ data:
     "Eurasian Blue Tit": "updated_EurasianBlueTit_data.csv"
     "Great Tit":         "updated_GreatTit_data.csv"
     "House Sparrow":     "updated_HouseSparrow_data.csv"
+    "Mallard":           "updated_mallard_data.csv"
 
   # One CSV per outlier species.
   # All entries are pooled into a single outlier test set.
