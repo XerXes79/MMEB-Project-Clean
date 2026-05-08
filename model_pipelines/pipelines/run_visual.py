@@ -64,9 +64,18 @@ def run_full_pipeline(skip_training: bool = False):
     np.save(os.path.join(cfg.checkpoint_directory, "centroids.npy"), centroids)
     print(f"  Centroids saved: {centroids.shape}")
 
-    covariances = compute_covariances(train_embs, train_labels, cfg.number_of_classes)
-    np.save(os.path.join(cfg.checkpoint_directory, "covariances.npy"), covariances)
-    print(f"  Covariances saved: {covariances.shape}")
+    if cfg.distance_metric == "mahalanobis":
+        covariances = compute_covariances(train_embs, train_labels, cfg.number_of_classes)
+        np.save(os.path.join(cfg.checkpoint_directory, "covariances.npy"), covariances)
+        print(f"  Covariances saved: {covariances.shape}")
+    else:
+        covariances = None
+        # Remove any stale covariances from a previous Mahalanobis run so the
+        # detector won't accidentally pick them up.
+        stale = os.path.join(cfg.checkpoint_directory, "covariances.npy")
+        if os.path.exists(stale):
+            os.remove(stale)
+        print(f"  Distance metric: euclidean (no covariances needed)")
 
     threshold = compute_distance_threshold(train_embs, train_labels, centroids, covariances)
     np.save(os.path.join(cfg.checkpoint_directory, "centroid_threshold.npy"), threshold)

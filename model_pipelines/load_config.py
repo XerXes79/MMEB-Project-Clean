@@ -57,7 +57,7 @@ def apply_yaml_config(config_path: str = None, cfg=None) -> None:
     y = load_yaml(config_path)
     c = cfg
 
-    # ── Data ──────────────────────────────────────────────────────────────
+    #Data
     data = y.get("data", {})
     c.data_root = data["data_root"]
     c.known_csv = dict(data["known_csvs"])
@@ -71,12 +71,12 @@ def apply_yaml_config(config_path: str = None, cfg=None) -> None:
     _config.class_to_id = {n: i for i, n in enumerate(_config.names)}
     _config.outlier_names = list(c.outlier_csv.keys())
 
-    # ── Model ─────────────────────────────────────────────────────────────
+    #Model
     model = y.get("model", {})
     c.embedding_dim = int(model["embedding_dim"])
     c.image_size = int(model["img_size"])
 
-    # ── Training ──────────────────────────────────────────────────────────
+    #Training
     training = y.get("training", {})
     c.batch = int(training["batch_size"])
     c.epoches = int(training["num_epochs"])
@@ -85,20 +85,30 @@ def apply_yaml_config(config_path: str = None, cfg=None) -> None:
     c.arcface_scaler = float(training["arcface_s"])
     c.arcface_margin = float(training["arcface_m"])
 
-    # ── Threshold ─────────────────────────────────────────────────────────
+    #Threshold
     c.percentile_of_threshold = int(y["threshold"]["percentile"])
 
-    # ── Paths ─────────────────────────────────────────────────────────────
+    #Distance metric
+    distance = y.get("distance", {})
+    metric = distance.get("metric", "mahalanobis").lower()
+    if metric not in ("mahalanobis", "euclidean"):
+        raise ValueError(
+            f"config.yaml: distance.metric must be 'mahalanobis' or 'euclidean', "
+            f"got '{metric}'"
+        )
+    c.distance_metric = metric
+
+    #Paths
     paths = y.get("paths", {})
     c.checkpoint_directory = paths["checkpoint_dir"]
     c.results_directory = paths["results_dir"]
 
-    # ── Evaluation ────────────────────────────────────────────────────────
+    #Evaluation
     evaluation = y.get("evaluation", {})
     c.embeding_visulize_method = evaluation.get("embedding_viz_method", "tsne")
     c.result_dpi = int(evaluation.get("plot_dpi", 300))
 
-    # ── Predict ───────────────────────────────────────────────────────────
+    #Predict
     predict = y.get("predict", {})
     c.image_extensions = set(
         predict.get("image_extensions", [".jpg", ".jpeg", ".png", ".webp", ".bmp"]))

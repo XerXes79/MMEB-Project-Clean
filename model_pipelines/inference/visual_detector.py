@@ -53,10 +53,17 @@ class VisualAnomalyDetector:
             os.path.join(checkpoint_dir, "covariances.npy"))
         self.centroid_threshold = float(np.load(
             os.path.join(checkpoint_dir, "centroid_threshold.npy")))
-        self._inv_covs = np.stack([
-            np.linalg.inv(self.covariances[c])
-            for c in range(len(self.centroids))
-        ])
+        if self.metric == "mahalanobis":
+            self.covariances = np.load(
+                os.path.join(checkpoint_dir, "covariances.npy"))
+            self._inv_covs = np.stack([
+                np.linalg.inv(self.covariances[c])
+                for c in range(len(self.centroids))
+            ])
+        else:
+            self.covariances = None
+            self._inv_covs = None
+
 
     @torch.no_grad()
     def predict(self, image_path: str) -> dict:
@@ -68,10 +75,15 @@ class VisualAnomalyDetector:
         tensor = self.transform(img).unsqueeze(0).to(self.device)
         emb = self.model(tensor).cpu().numpy()[0]
 
-        dists = np.array([
-            float(np.sqrt((diff := emb - self.centroids[c]) @ self._inv_covs[c] @ diff))
-            for c in range(len(self.centroids))
-        ])
+        if self.metric == "mahalanobis":
+            dists = np.array([
+                float(np.sqrt((diff := emb - self.centroids[c]) @ self._inv_covs[c] @ diff))
+                for c in range(len(self.centroids))
+            ])
+        else:
+            # Euclidean
+            dists = np.linalg.norm(self.centroids - emb, axis=1)
+
         min_idx = int(np.argmin(dists))
         min_dist = float(dists[min_idx])
 

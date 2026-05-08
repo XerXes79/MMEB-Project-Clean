@@ -100,9 +100,15 @@ def print_summary_table(Xk: np.ndarray, Xo: np.ndarray,
 
 
 def load_artifacts() -> tuple:
-    """Load saved centroids, covariances, and threshold from disk."""
+        """
+    Load saved centroids, threshold, and (for Mahalanobis) covariances.
+    Returns (centroids, covariances_or_None, threshold).
+    """
     centroids = np.load(os.path.join(cfg.checkpoint_directory, "centroids.npy"))
-    covariances = np.load(os.path.join(cfg.checkpoint_directory, "covariances.npy"))
+    if cfg.distance_metric == "mahalanobis":
+        covariances = np.load(os.path.join(cfg.checkpoint_directory, "covariances.npy"))
+    else:
+        covariances = None
     threshold = float(np.load(
         os.path.join(cfg.checkpoint_directory, "centroid_threshold.npy")))
     return centroids, covariances, threshold

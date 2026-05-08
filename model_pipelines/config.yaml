@@ -161,3 +161,15 @@ logging:
   # Options: DEBUG, INFO, WARNING, ERROR
   level: "WARNING"
   format: "%(levelname)s %(name)s: %(message)s"
+
+distance:
+  # Distance metric used to score how far an embedding is from each class centroid.
+  #
+  # Options:
+  #   "mahalanobis" — accounts for per-class spread/correlation. More expressive,
+  #                   needs covariances.npy.
+  #   "euclidean"   — plain L2 distance to centroid.
+  #
+  # The threshold is recalibrated automatically per metric, so you can swap freely
+  # and re-run with --skip-training to recompute centroids + threshold without retraining.
+  metric: "mahalanobis"

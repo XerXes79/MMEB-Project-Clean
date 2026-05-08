@@ -48,6 +48,7 @@ class VisualConfig:
         self.arcface_margin = 0.8
 
         self.percentile_of_threshold = 75
+        self.distance_metric = "mahalanobis"  
 
         self.checkpoint_directory = "checkpoints"
         self.results_directory = "results"
