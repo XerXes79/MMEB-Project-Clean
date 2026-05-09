@@ -73,7 +73,7 @@ threshold:
   # Lower (e.g. 70) → stricter.
   # Higher (e.g. 95) → looser.
   # Re-run with --skip-training after changing this to recalibrate without retraining.
-  percentile: 60
+  percentile: 70
 
 
 
