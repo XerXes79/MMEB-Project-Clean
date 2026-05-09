@@ -3,7 +3,7 @@ data:
   #   Windows:  set DATA_ROOT=D:\path\to\images
   #   Linux:    export DATA_ROOT=/path/to/images
   # Can also be overridden per-run with --data-root.
-  data_root: "D:/test/data/raw"
+  data_root: 'D:\MMEB-Project\data\processed'
 
   # One CSV per known species (train + val + test).
   # Each CSV must have an "image_path" column.
